@@ -68,21 +68,21 @@ def getNearbyPixels(pix, x, y, blockSize, size):
 
     return [pix[i, j] for i in range(xMin, xMax) for j in range(yMin, yMax)]
 
-def getNoiseFunc(noiseLevel, isWhite):
-    whiteNoise = lambda tone, noise : min(max(tone + noise, 0), 255)
-    randomNoise = lambda tone, level : min(max(tone + randint(-level, level), 0), 255)
+def getNoiseFunc(noiseLevel, isSingleTone):
+    singletoneNoise = lambda tone, noise : min(max(tone + noise, 0), 255)
+    multitoneNoise = lambda tone, level : min(max(tone + randint(-level, level), 0), 255)
 
-    def addWhiteNoise(rgb):
+    def singletoneNoiseFunc(rgb):
         noise = randint(-noiseLevel, noiseLevel)
-        return (whiteNoise(rgb[0], noise), whiteNoise(rgb[1], noise), whiteNoise(rgb[2], noise))
+        return (singletoneNoise(rgb[0], noise), singletoneNoise(rgb[1], noise), singletoneNoise(rgb[2], noise))
 
-    def addRandomNoise(rgb):
-        return (randomNoise(rgb[0], noiseLevel), randomNoise(rgb[1], noiseLevel), randomNoise(rgb[2], noiseLevel))
+    def multitoneNoiseFunc(rgb):
+        return (multitoneNoise(rgb[0], noiseLevel[0]), multitoneNoise(rgb[1], noiseLevel[1]), multitoneNoise(rgb[2], noiseLevel[2]))
 
-    if isWhite:
-        return addWhiteNoise
+    if isSingleTone:
+        return singletoneNoiseFunc
     else:
-        return addRandomNoise
+        return multitoneNoiseFunc
 
 def getPixelBlockForCornerPixel(pix, x, y, blockSize, size):
     xMax = min(size[0], x + blockSize)

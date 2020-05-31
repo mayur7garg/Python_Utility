@@ -23,8 +23,17 @@ def imageEffect(effect_func):
     return applyEffectAndSave
 
 @imageEffect
-def addNoise(pix, size, noiseLevel, isWhite = False):
-    noiseFunc = util.getNoiseFunc(noiseLevel, isWhite)
+def addMultitoneNoise(pix, size, noiseLevel):
+    noiseFunc = util.getNoiseFunc(noiseLevel, False)
+    original = pix.original
+    
+    for x in range(size[0]):
+        for y in range(size[1]):
+            pix.new[x, y] = noiseFunc(original[x, y])  
+
+@imageEffect
+def addSingletoneNoise(pix, size, noiseLevel):
+    noiseFunc = util.getNoiseFunc(noiseLevel, True)
     original = pix.original
     
     for x in range(size[0]):

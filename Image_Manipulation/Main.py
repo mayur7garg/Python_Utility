@@ -4,7 +4,8 @@ import os
 blurDegree = [3, 5]
 colorSpectrum = ['R', 'G', 'B']
 grayscaleModes = ['AVG', 'MAX', 'MEDIAN', 'MIN']
-noiseLevel = [25, 50]
+singleToneNoiseLevel = [25, 50]
+multiToneNoiseLevel = [(100, 0, 0), (25, 50, 75), (30, 30, 30)]
 pixelation = [10, 25]
 vignetteOrder = [2, 3]
 vignetteColor = ['B', 'W']
@@ -34,11 +35,13 @@ for f in os.listdir('Test_Images'):
     imgEffect.invert(fPath, invertFileName)
 
     #Noise
-    for n in noiseLevel:
-        randomNoiseFileName = f"Results\\Noise\\{fname}_Noise_Random_{n}{fext}"
-        imgEffect.addNoise(fPath, randomNoiseFileName, n)
-        whiteNoiseFileName = f"Results\\Noise\\{fname}_Noise_White_{n}{fext}"
-        imgEffect.addNoise(fPath, whiteNoiseFileName, n, True)
+    for n in multiToneNoiseLevel:
+        multiToneNoiseFileName = f"Results\\Noise\\{fname}_Noise_Multi_{n}{fext}"
+        imgEffect.addMultitoneNoise(fPath, multiToneNoiseFileName, n)
+
+    for n in singleToneNoiseLevel:
+        singleToneNoiseFileName = f"Results\\Noise\\{fname}_Noise_Single_{n}{fext}"
+        imgEffect.addSingletoneNoise(fPath, singleToneNoiseFileName, n)
 
     #Pixelate
     for p in pixelation:
@@ -49,5 +52,5 @@ for f in os.listdir('Test_Images'):
     for color in vignetteColor:
         for order in vignetteOrder:
             for offset in vignetteOffset:
-                vignetteFileName = f"Results\\Vignette\\{fname}_Vignette_{color}_{order}_{offset[0]}_{offset[1]}{fext}"
+                vignetteFileName = f"Results\\Vignette\\{fname}_Vignette_{color}_{order}_{offset}{fext}"
                 imgEffect.vignette(fPath, vignetteFileName, color, order, offset)
