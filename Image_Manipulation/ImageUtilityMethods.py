@@ -41,14 +41,16 @@ def getGrayscaleColorForPixel(pix, x, y, grayscaleFunc):
 def getGrayscaleFunc(mode):
     mode = mode.strip().upper()
 
-    if mode == "MAX":
+    if mode == "AVG":
+        return lambda rgb : sum(rgb)//len(rgb)
+    elif mode == "MAX":
         return max
+    elif mode == "MEDIAN":
+        return lambda rgb : sorted(rgb)[1]
     elif mode == "MIN":
         return min
-    elif mode == "AVG":
-        return lambda rgb : sum(rgb)//len(rgb)
     else:
-        raise ValueError("Invalid value of 'mode' variable. The accepted values are: 'MAX', 'MIN' or 'AVG'.")
+        raise ValueError("Invalid value of 'mode' variable. The accepted values are: 'AVG', 'MAX', 'MEDIAN' or 'MIN'.")
 
 def getInvertColor(pix, x, y):
     (r, g, b) = pix[x, y]

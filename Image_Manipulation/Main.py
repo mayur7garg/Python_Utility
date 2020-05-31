@@ -3,7 +3,7 @@ import os
 
 blurDegree = [3, 5]
 colorSpectrum = ['R', 'G', 'B']
-grayscaleModes = ['AVG', 'MAX', 'MIN']
+grayscaleModes = ['AVG', 'MAX', 'MEDIAN', 'MIN']
 noiseLevel = [25, 50]
 pixelation = [10, 25]
 vignetteOrder = [2, 3]
