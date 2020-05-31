@@ -34,11 +34,6 @@ def getColorSpectrumIndex(colorSpectrum):
     else:
         raise ValueError("Invalid value of 'colorSpectrum' variable. The accepted values are: 'R', 'G', 'B', 'RED', 'GREEN' or 'BLUE'.")
 
-def getRelativeDistanceFromCentralPt(centralPt, scale, x, y, maxDistance, offset):
-    distance = ((abs(centralPt[0] - x) + offset[0]) ** scale) + ((abs(centralPt[1] - y ) + offset[1]) ** scale)
-    relativeDistance = min(distance/maxDistance, 1)
-    return relativeDistance
-
 def getGrayscaleColorForPixel(pix, x, y, grayscaleFunc):
     grayscale = grayscaleFunc(pix[x, y])
     return (grayscale, grayscale, grayscale)
@@ -59,13 +54,8 @@ def getInvertColor(pix, x, y):
     (r, g, b) = pix[x, y]
     return (255 - r, 255 - g, 255 - b)
 
-def getMaxDistanceFromCentralPt(centralPt, scale):
-    scale = int(scale)
-
-    if scale < 1:
-        raise ValueError("Invalid value of 'scale' variable. The accepted value is any positive integer.")
-
-    maxDistance = centralPt[0] ** scale + centralPt[1] ** scale
+def getMaxDistanceFromCentralPt(centralPt, order):
+    maxDistance = centralPt[0] ** order + centralPt[1] ** order
     return maxDistance
 
 def getNearbyPixels(pix, x, y, blockSize, size):
@@ -74,9 +64,7 @@ def getNearbyPixels(pix, x, y, blockSize, size):
     yMin = max(0, y - blockSize)
     yMax = min(size[1], y + blockSize + 1)
 
-    pixLst = [pix[i, j] for i in range(xMin, xMax) for j in range(yMin, yMax)]
-
-    return pixLst
+    return [pix[i, j] for i in range(xMin, xMax) for j in range(yMin, yMax)]
 
 def getNoiseFunc(noiseLevel, isWhite):
     whiteNoise = lambda tone, noise : min(max(tone + noise, 0), 255)
@@ -98,22 +86,32 @@ def getPixelBlockForCornerPixel(pix, x, y, blockSize, size):
     xMax = min(size[0], x + blockSize)
     yMax = min(size[1], y + blockSize)
 
-    pixLst = [pix[i, j] for i in range(x, xMax) for j in range(y, yMax)]
+    return [pix[i, j] for i in range(x, xMax) for j in range(y, yMax)]
 
-    return pixLst
+def getRelativeDistanceFromCentralPt(xDist, yDist, offset, order, maxDistance):
+    distance = ((xDist + offset[0]) ** order) + ((yDist + offset[1]) ** order)
+    return min(distance/maxDistance, 1)
 
 def getSingleColorSpectrumForPixel(pix, x, y, colorIndex):
     color = [0, 0, 0]
     color[colorIndex] = pix[x, y][colorIndex]
     return tuple(color)
 
-def getVignetteColor(pix, x, y, relativeDistance, vignetteFunc):
-    (r, g, b) = pix[x, y]
-    return (vignetteFunc(r, relativeDistance), vignetteFunc(g, relativeDistance), vignetteFunc(b, relativeDistance))
-
 def getVignetteFunc(colorCode):
-    blackVignetteFunc = lambda rgb, relativeDistance : int(rgb - (relativeDistance * rgb))
-    whiteVignetteFunc = lambda rgb, relativeDistance : int(rgb + relativeDistance * (255 - rgb))
+    blackVignette = lambda rgb, relativeDistance : int(rgb - (relativeDistance * rgb))
+    whiteVignette = lambda rgb, relativeDistance : int(rgb + relativeDistance * (255 - rgb))
+
+    def blackVignetteFunc(rgb, relativeDistance):
+        if relativeDistance == 1:
+            return (0, 0, 0)
+        else:
+            return (blackVignette(rgb[0], relativeDistance), blackVignette(rgb[1], relativeDistance), blackVignette(rgb[2], relativeDistance))
+
+    def whiteVignetteFunc(rgb, relativeDistance):
+        if relativeDistance == 1:
+            return (255, 255, 255)
+        else:
+            return (whiteVignette(rgb[0], relativeDistance), whiteVignette(rgb[1], relativeDistance), whiteVignette(rgb[2], relativeDistance))
 
     colorCode = colorCode.strip().upper()
 

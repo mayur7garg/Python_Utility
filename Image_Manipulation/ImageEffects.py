@@ -77,16 +77,29 @@ def pixelate(pix, size, pixelation):
                     pix.new[i, j] = pixelColor
 
 @imageEffect
-def vignette(pix, size, colorCode = 'B', scale = 2, offset = (0, 0)):
+def vignette(pix, size, colorCode = 'B', order = 2, offset = (0, 0)):
+    order = int(order)
+    if order < 1:
+        raise ValueError("Invalid value of 'scale' variable. The accepted value is any positive integer.")
+
     centralPt = (size[0]//2, size[1]//2)
-    maxDistance = util.getMaxDistanceFromCentralPt(centralPt, scale)
+    maxDistance = util.getMaxDistanceFromCentralPt(centralPt, order)
     vignetteFunc = util.getVignetteFunc(colorCode)
 
-    scale = int(scale)
-    if scale < 1:
-        raise ValueError("Invalid value of 'scale' variable. The accepted value is any positive integer.")
-    
+    original = pix.original
+    new = pix.new
+
+    relDistDict = {}
+
     for x in range(size[0]):
         for y in range(size[1]):
-            relativeDistance = util.getRelativeDistanceFromCentralPt(centralPt, scale, x, y, maxDistance, offset)
-            pix.new[x, y] = util.getVignetteColor(pix.original, x, y, relativeDistance, vignetteFunc)
+            xDist = abs(centralPt[0] - x)
+            yDist = abs(centralPt[1] - y )
+
+            relativeDist = relDistDict.get((xDist, yDist))
+            
+            if relativeDist is None:
+                relativeDist = util.getRelativeDistanceFromCentralPt(xDist, yDist, offset, order, maxDistance)
+                relDistDict[(xDist, yDist)] = relativeDist
+
+            new[x, y] = vignetteFunc(original[x, y], relativeDist)

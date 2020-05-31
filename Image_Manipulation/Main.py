@@ -6,7 +6,7 @@ colorSpectrum = ['R', 'G', 'B']
 grayscaleModes = ['AVG', 'MAX', 'MIN']
 noiseLevel = [25, 50]
 pixelation = [10, 25]
-vignetteScale = [2, 3]
+vignetteOrder = [2, 3]
 vignetteColor = ['B', 'W']
 vignetteOffset = [(0, 0), (100, 100)]
 
@@ -47,7 +47,7 @@ for f in os.listdir('Test_Images'):
 
     #Vignette
     for color in vignetteColor:
-        for scale in vignetteScale:
+        for order in vignetteOrder:
             for offset in vignetteOffset:
-                vignetteFileName = f"Results\\Vignette\\{fname}_Vignette_{color}_{scale}_{offset[0]}_{offset[1]}{fext}"
-                imgEffect.vignette(fPath, vignetteFileName, color, scale, offset)
+                vignetteFileName = f"Results\\Vignette\\{fname}_Vignette_{color}_{order}_{offset[0]}_{offset[1]}{fext}"
+                imgEffect.vignette(fPath, vignetteFileName, color, order, offset)
