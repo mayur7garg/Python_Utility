@@ -11,9 +11,9 @@ vignetteOrder = [2, 3]
 vignetteColor = ['B', 'W']
 vignetteOffset = [(0, 0), (100, 100)]
 
-for f in os.listdir('Test_Images'):
+for f in os.listdir('..\Test_Images'):
     fname, fext = os.path.splitext(f)
-    fPath = "Test_Images\\" + f
+    fPath = "..\\Test_Images\\" + f
 
     #Blur
     for b in blurDegree:
