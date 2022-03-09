@@ -13,8 +13,11 @@ def are_coprimes(a, b):
     if mn == 1:
         return True
     
-    for i in range(2, mn + 1):
-        if mx % i == 0:
+    if mx % mn == 0:
+        return False
+
+    for i in range(2, mn):
+        if (mx % i == 0) and (mn % i == 0):
             return False
             
     return True
