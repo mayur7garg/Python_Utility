@@ -1,4 +1,4 @@
-# Image Manipulation using Pillow (Python)
+# Image Effects using Pillow (Python)
 Contains scripts to manipulate an image by applying any of the following effects:
 * Blur
 * Isolating the RGB color spectrum 
