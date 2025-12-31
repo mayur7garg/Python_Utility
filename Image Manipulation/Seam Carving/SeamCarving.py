@@ -203,7 +203,7 @@ def _(form):
     mo.stop(not form.value, "Submit the form above to run")
 
     img_path = form.value['img_selector'][0].path
-    img = Image.open(img_path)
+    img = Image.open(img_path).convert('RGB')
     mo.vstack([
         mo.md(f"### Selected image: {img_path.stem}"),
         mo.md(f"#### Size: {img.width} X {img.height}"),
